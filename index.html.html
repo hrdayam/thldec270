@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Heritage Log - December 27</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        h1, h2, h3, .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .animate-bar {
+            animation: fillBar 1.5s ease-out forwards;
+        }
+        @keyframes fillBar {
+            from { width: 0%; }
+        }
+        /* Custom strong styling */
+        strong {
+            color: #1a202c; /* gray-900 */
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Icons defined internally ---
+        const IconWrapper = ({ children, size = 24, className = "" }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width={size} 
+                height={size} 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className={className}
+            >
+                {children}
+            </svg>
+        );
+
+        const Star = (props) => (
+            <IconWrapper {...props}>
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </IconWrapper>
+        );
+
+        const Copy = (props) => (
+            <IconWrapper {...props}>
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </IconWrapper>
+        );
+
+        const Calendar = (props) => (
+            <IconWrapper {...props}>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </IconWrapper>
+        );
+
+        const BookOpen = (props) => (
+            <IconWrapper {...props}>
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </IconWrapper>
+        );
+
+        const Award = (props) => (
+            <IconWrapper {...props}>
+                <circle cx="12" cy="8" r="7"></circle>
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+            </IconWrapper>
+        );
+
+        const User = (props) => (
+            <IconWrapper {...props}>
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </IconWrapper>
+        );
+
+        const ExternalLink = (props) => (
+            <IconWrapper {...props}>
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+            </IconWrapper>
+        );
+
+        const Quote = (props) => (
+            <IconWrapper {...props}>
+                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+            </IconWrapper>
+        );
+
+        // Data Store for December 27
+        const profiles = [
+            {
+                id: 1,
+                name: "Nitin Gadkari",
+                fullName: "Nitin Jairam Gadkari",
+                type: "Birth Anniversary",
+                dates: "Born Dec 27, 1957",
+                tagline: "The Highway Man of India",
+                community: "Deshastha Brahmin",
+                location: "Nagpur, Maharashtra",
+                role: "Minister of Road Transport & Highways",
+                rating: 5.0,
+                image: "https://y20india.in/wp-content/uploads/2024/03/Nitin-Gadkari.webp",
+                links: [
+                    { title: "Official Profile", url: "https://morth.nic.in/shri-nitin-jairam-gadkari" },
+                    { title: "Wikipedia", url: "https://en.wikipedia.org/wiki/Nitin_Gadkari" }
+                ],
+                attributes: [
+                    { label: "Vision (Drishti)", value: 100, color: "bg-orange-500" },
+                    { label: "Execution Speed", value: 100, color: "bg-green-600" },
+                    { label: "Innovation", value: 90, color: "bg-blue-500" }
+                ],
+                content: `Born into a Deshastha Brahmin family in Nagpur, Nitin Gadkari has redefined the pace of infrastructure development in modern India. Known for his "no-nonsense" administrative style and ability to cut through red tape, he earned his reputation early by constructing the Mumbai-Pune Expressway in record time as a state minister.
+
+As a Union Minister, he has overseen a massive expansion of India's National Highway network, introducing new technologies like FASTag and focusing on alternative fuels like ethanol and hydrogen.
+
+<strong>Key Achievements:</strong>
+• <strong>The Mumbai-Pune Expressway:</strong> India's first six-lane concrete, high-speed, access-controlled expressway.
+• <strong>Highway Revolution:</strong> Under his tenure, the pace of highway construction in India reached world-record levels (approx. 37 km/day at peak).
+• <strong>Pragmatism:</strong> He is widely respected across party lines for his focus on performance and delivery over politics.`
+            },
+            {
+                id: 2,
+                name: "Rabindranath Tagore",
+                fullName: "Rabindranath Tagore",
+                type: "Historic Achievement (1911)",
+                dates: "Dec 27, 1911 (Event Date)",
+                tagline: "The Voice of India's Destiny",
+                community: "Pirali Brahmin",
+                location: "Calcutta Session of INC",
+                role: "Poet, Composer & Polymath",
+                rating: 5.0,
+                image: "https://images.saymedia-content.com/.image/ar_4:3%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:eco%2Cw_1200/MTk2OTEzNjUxNjE2MDY0Nzcx/life-sketch-of-rabindranath-tagore.jpg",
+                links: [
+                    { title: "Wikipedia Profile", url: "https://en.wikipedia.org/wiki/Rabindranath_Tagore" },
+                    { title: "Jana Gana Mana History", url: "https://en.wikipedia.org/wiki/Jana_Gana_Mana" },
+                    { title: "Nobel Prize Biography", url: "https://www.nobelprize.org/prizes/literature/1913/tagore/biographical/" }
+                ],
+                attributes: [
+                    { label: "Cultural Impact", value: 100, color: "bg-indigo-600" },
+                    { label: "National Pride", value: 100, color: "bg-orange-500" },
+                    { label: "Lyricism", value: 100, color: "bg-pink-500" }
+                ],
+                content: `On this day in 1911, the song "Jana Gana Mana," composed by the polymath <strong>Rabindranath Tagore</strong>, was sung publicly for the first time. This historic event took place during the 26th Session of the Indian National Congress in Calcutta.
+
+While Tagore is globally celebrated for his literature, this specific contribution gave India its auditory identity. The song, written in highly Sanskritized Bengali (Sadhu Bhasha), transcends regional boundaries to present a unified vision of the nation.
+
+<strong>Key Significance:</strong>
+• <strong>The Composition:</strong> Originally titled "Bharoto Bhagyo Bidhata," the first stanza was adopted as the National Anthem in 1950.
+• <strong>The Meaning:</strong> Tagore clarified that the "Eternal Charioteer" in the lyrics referred to the Divine Guide of India's destiny, dispelling rumors that it was a eulogy for the British monarch.
+• <strong>Universal Appeal:</strong> It is one of the few national anthems that focuses entirely on the geography and pluralism of the land rather than military conquest.`
+            },
+            {
+                id: 8,
+                name: "Sarla Devi Chaudhurani",
+                fullName: "Sarla Devi Chaudhurani",
+                type: "Historic Role (1911)",
+                dates: "Sept 9, 1872 - Aug 18, 1945",
+                tagline: "The Voice Behind the First Rendition",
+                community: "Pirali Brahmin",
+                location: "Calcutta Session (1911)",
+                role: "Freedom Fighter & Educationist",
+                rating: 4.9,
+                image: "https://tse4.mm.bing.net/th/id/OIP.7qDt17qFq1Zc5ikEMRLSXQAAAA?rs=1&pid=ImgDetMain&o=7&rm=3",
+                links: [
+                    { title: "Wikipedia Profile", url: "https://en.wikipedia.org/wiki/Sarla_Devi_Chaudhurani" }
+                ],
+                attributes: [
+                    { label: "Leadership", value: 100, color: "bg-red-600" },
+                    { label: "Music", value: 95, color: "bg-pink-500" },
+                    { label: "Feminism", value: 100, color: "bg-purple-500" }
+                ],
+                content: `While Tagore composed the anthem, it was his niece, <strong>Sarla Devi Chaudhurani</strong>, who breathed life into it on this historic day. On December 27, 1911, she orchestrated and led the chorus of school students to sing "Jana Gana Mana" for the very first time in front of the Indian National Congress.
+
+A fierce nationalist and a Pirali Brahmin, she was far more than just a singer. She founded the *Bharat Stree Mahamandal*, the first all-India women's organization, in 1910.
+
+<strong>Key Achievements:</strong>
+• <strong>The Performance:</strong> Her rendition of the anthem set the tone for its eventual adoption, impressing the Congress leadership with its solemnity and power.
+• <strong>Women's Rights:</strong> She famously clashed with the male-dominated Congress leadership to demand better representation for women.
+• <strong>Swadeshi Movement:</strong> She opened "Lakhir Bhandar," a store dedicated to Swadeshi goods, promoting economic independence.`
+            },
+            {
+                id: 3,
+                name: "Usha Mangeshkar",
+                fullName: "Usha Mangeshkar",
+                type: "Birth Anniversary",
+                dates: "Born Dec 27, 1935",
+                tagline: "The Voice of Exuberance",
+                community: "Gaud Saraswat Brahmin (GSB)",
+                location: "Indore / Mumbai",
+                role: "Playback Singer",
+                rating: 4.6,
+                image: "https://images.mid-day.com/images/images/2021/may/usha-mangeshkar-raam_d.jpg",
+                links: [
+                    { title: "Wikipedia Profile", url: "https://en.wikipedia.org/wiki/Usha_Mangeshkar" },
+                    { title: "Discography", url: "https://gaana.com/artist/usha-mangeshkar" }
+                ],
+                attributes: [
+                    { label: "Versatility", value: 90, color: "bg-purple-500" },
+                    { label: "Energy", value: 95, color: "bg-red-500" },
+                    { label: "Legacy", value: 100, color: "bg-yellow-500" }
+                ],
+                content: `Born into the legendary Mangeshkar family (Gaud Saraswat Brahmins from Goa), Usha Mangeshkar created her own unique niche in the Indian music industry. While her sister Lata Mangeshkar was known for soulful melodies and Asha Bhosle for versatility, Usha became the voice of celebration, folk energy, and devotion.
+
+Her father, Deenanath Mangeshkar, was a classical singer and theater actor, and she carried that artistic lineage forward with distinct flair. She is particularly revered in Marathi cinema for her "Lavani" songs and in Hindi cinema for high-energy dance numbers.
+
+<strong>Key Achievements:</strong>
+• <strong>Iconic Hits:</strong> Immortalized songs like "Mungda" (Inkaar) and the devotional soundtrack of the blockbuster film "Jai Santoshi Maa."
+• <strong>Regional Contribution:</strong> A titan in the Marathi film industry, having sung for hundreds of films.
+• <strong>Artistic Talent:</strong> Beyond music, she is also an accomplished painter.`
+            },
+            {
+                id: 4,
+                name: "Pandit Bishan Narayan Dar",
+                fullName: "Bishan Narayan Dar",
+                type: "Historical Occurrence (1911)",
+                dates: "1864 - 1916",
+                tagline: "The Eloquent Nationalist",
+                community: "Kashmiri Brahmin",
+                location: "Lucknow / Calcutta",
+                role: "President of INC (1911 Session)",
+                rating: 4.5,
+                image: "https://alchetron.com/cdn/bishan-narayan-dar-983870bf-e289-42d7-9eab-2a8d2718274-resize-750.jpeg",
+                links: [
+                    { title: "Congress Presidents", url: "https://www.inc.in/en/leadership/past-party-presidents/bishan-narayan-dar" }
+                ],
+                attributes: [
+                    { label: "Oratory", value: 95, color: "bg-blue-500" },
+                    { label: "Legal Acumen", value: 90, color: "bg-gray-600" },
+                    { label: "Nationalism", value: 100, color: "bg-orange-600" }
+                ],
+                content: `While December 27 is famous for the anthem, it was <strong>Pandit Bishan Narayan Dar</strong> who presided over that historic session. A Kashmiri Pandit from a distinguished family, Dar was one of the few Indians of his time to be called to the Bar in England.
+
+His presidency in 1911 was crucial as it came immediately after the annulment of the Partition of Bengal, a victory for the nationalist movement. His presidential address was noted for its eloquence and deep understanding of India's political needs.
+
+<strong>Key Achievements:</strong>
+• <strong>Social Reform:</strong> He was a staunch advocate for social reform within the Kashmiri Pandit community and Hindu society at large, often writing in Urdu and English.
+• <strong>The Lawyer-Poet:</strong> He was known not just for his legal arguments but for his Urdu poetry and literary essays, bridging the gap between the chaotic political sphere and refined culture.
+• <strong>Legacy:</strong> He represents the intellectual lawyer-politician class of Brahmins who laid the constitutional foundations of the freedom struggle.`
+            },
+            {
+                id: 5,
+                name: "Sunil Kothari",
+                fullName: "Sunil Kothari",
+                type: "Death Anniversary",
+                dates: "Dec 20, 1933 - Dec 27, 2020",
+                tagline: "The Chronicler of Indian Dance",
+                community: "Nagar Brahmin",
+                location: "Mumbai / Delhi",
+                role: "Dance Historian & Critic",
+                rating: 4.8,
+                image: "https://classicalclaps.com/wp-content/uploads/2020/12/Dr-Sunil-Kothari.jpg",
+                links: [
+                    { title: "Sangeet Natak Akademi", url: "https://sangeetnatak.gov.in/" },
+                    { title: "Wikipedia Profile", url: "https://en.wikipedia.org/wiki/Sunil_Kothari" }
+                ],
+                attributes: [
+                    { label: "Scholarship", value: 100, color: "bg-purple-600" },
+                    { label: "Preservation", value: 95, color: "bg-pink-500" },
+                    { label: "Dedication", value: 100, color: "bg-red-500" }
+                ],
+                content: `Sunil Kothari was a monumental figure in the world of Indian classical arts. Born into a Gujarati Nagar Brahmin family (a community historically associated with scholarship and administration), he dedicated his entire life to documenting, researching, and popularizing Indian classical dance forms.
+
+He passed away on this day in 2020, leaving behind a treasure trove of literature that serves as the academic backbone for dance students today. He was particularly instrumental in getting <strong>Sattriya</strong> (from Assam) recognized as one of the major classical dance forms of India.
+
+<strong>Key Achievements:</strong>
+• <strong>Padma Shri:</strong> Awarded in 2001 for his immense contribution to the arts.
+• <strong>The Encyclopedia:</strong> He authored definitive books on Bharatanatyam, Odissi, Kathak, Kuchipudi, and Chhau, often traveling to remote villages to research roots.
+• <strong>Global Ambassador:</strong> He served as a member of the International Dance Council (UNESCO), taking Indian heritage to the global stage.`
+            },
+            {
+                id: 6,
+                name: "Nityanand Sharma",
+                fullName: "Nityanand Sharma",
+                type: "Birth Anniversary",
+                dates: "Dec 27, 1927 - Dec 12, 2012",
+                tagline: "First Chief Minister of Uttarakhand",
+                community: "Brahmin",
+                location: "Narnaul, Haryana / Dehradun",
+                role: "Politician & Lawyer",
+                rating: 4.7,
+                image: "https://umjb.in/admin/uploads/gyankosh/6253c4df54de7a186eba7050e8cdbc02.jpg",
+                links: [
+                    { title: "Wikipedia Profile", url: "https://en.wikipedia.org/wiki/Nityanand_Swami_(politician)" },
+                    { title: "Uttarakhand Assembly", url: "https://ukvidhansabha.uk.gov.in/" }
+                ],
+                attributes: [
+                    { label: "Governance", value: 90, color: "bg-teal-600" },
+                    { label: "Integrity", value: 95, color: "bg-blue-500" },
+                    { label: "Pioneering", value: 100, color: "bg-orange-500" }
+                ],
+                content: `Nityanand Sharma was a distinguished lawyer and politician who etched his name in history as the <strong>First Chief Minister of Uttarakhand</strong> when the state was carved out of Uttar Pradesh in 2000. Born on this day in 1927, he represented the Brahmin leadership that was pivotal in the hill state's early governance.
+
+Known for his gentle demeanor and clean image, he played a crucial role in establishing the administrative infrastructure of the newly formed state, transitioning it from a movement to a functioning government.
+
+<strong>Key Achievements:</strong>
+• <strong>Statehood Pioneer:</strong> As Chairman of the Uttar Pradesh Legislative Council, he was instrumental in the legislative processes that led to the creation of Uttarakhand.
+• <strong>Clean Governance:</strong> He is often remembered for his non-controversial and dignified style of politics, a rarity in the turbulent political landscape of the time.
+• <strong>Social Service:</strong> A lawyer by profession, he was deeply involved in educational and social trade union activities in Dehradun.`
+            },
+            {
+                id: 7,
+                name: "Pandit Premnath Bhat",
+                fullName: "Pandit Premnath Bhat",
+                type: "Martyrdom Day",
+                dates: "Died Dec 27, 1989",
+                tagline: "The Martyr of Truth",
+                community: "Kashmiri Pandit",
+                location: "Anantnag, Kashmir",
+                role: "Lawyer, Journalist & Activist",
+                rating: 5.0,
+                image: "https://www.dailyexcelsior.com/wp-content/uploads/2025/12/P.N.Bhat_.jpg",
+                links: [
+                    { title: "Community Tribute", url: "http://www.shehjar.com/" },
+                    { title: "Martyrdom Archives", url: "https://www.ikashmir.net/" }
+                ],
+                attributes: [
+                    { label: "Courage", value: 100, color: "bg-red-600" },
+                    { label: "Activism", value: 100, color: "bg-orange-600" },
+                    { label: "Sacrifice", value: 100, color: "bg-yellow-500" }
+                ],
+                content: `Pandit Premnath Bhat was a fearless lawyer, author, and social activist from Anantnag who became one of the first prominent victims of terrorism in Kashmir. On December 27, 1989, he was assassinated near his home, an event that is widely considered the harbinger of the forced exodus of Kashmiri Pandits that followed shortly after.
+
+A staunch nationalist and a voice for the community, his martyrdom is observed annually by Kashmiri Pandits worldwide as a day to remember the sacrifices made by the community.
+
+<strong>Key Achievements:</strong>
+• <strong>Voice of the Community:</strong> Through his writings in local newspapers, he fearlessly exposed the rising tide of communalism and separatism in the valley when others remained silent.
+• <strong>Legacy of Resistance:</strong> His death galvanized the community, and the "Prem Nath Bhat Memorial Trust" continues to advocate for the rights and preservation of Kashmiri Pandit shrines.
+• <strong>Professional Excellence:</strong> He was a highly respected member of the Anantnag Bar Association, known for his legal acumen and defense of the downtrodden.`
+            }
+        ];
+
+        const AttributeBar = ({ label, value, color }) => (
+            <div className="mb-3">
+                <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
+                    <span>{label}</span>
+                    <span>{value}%</span>
+                </div>
+                <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                        className={`h-full ${color} rounded-full animate-bar`} 
+                        style={{ width: `${value}%` }}
+                    ></div>
+                </div>
+            </div>
+        );
+
+        const StarRating = ({ rating }) => {
+            const stars = [];
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.floor(rating)) {
+                    stars.push(<Star key={i} size={16} className="text-yellow-400 fill-current" />);
+                } else if (i === Math.ceil(rating) && !Number.isInteger(rating)) {
+                     stars.push(<Star key={i} size={16} className="text-yellow-400 fill-current opacity-50" />);
+                } else {
+                    stars.push(<Star key={i} size={16} className="text-gray-300" />);
+                }
+            }
+            return <div className="flex gap-1 items-center">{stars} <span className="ml-2 text-sm font-bold text-gray-700">{rating}/5</span></div>;
+        };
+
+        const ProfileCard = ({ profile }) => {
+            const [copied, setCopied] = useState(false);
+
+            const handleCopy = () => {
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = profile.content;
+                const cleanContent = tempDiv.textContent || tempDiv.innerText;
+
+                const text = `${profile.name} (${profile.dates})\n${profile.tagline}\n\n${cleanContent}`;
+                
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                } catch (err) {
+                    console.error('Fallback: Oops, unable to copy', err);
+                }
+                document.body.removeChild(textArea);
+            };
+
+            const profileType = profile.type || "";
+
+            return (
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col md:flex-row">
+                    <div className="w-full md:w-1/3 bg-slate-50 p-6 border-r border-gray-100 flex flex-col justify-between">
+                        <div>
+                            <div className="mb-6 relative">
+                                <div className="aspect-[4/3] w-full rounded-lg overflow-hidden shadow-md bg-gray-200 group">
+                                    <img 
+                                        src={profile.image} 
+                                        alt={profile.name}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        onError={(e) => {
+                                            e.target.onerror = null; 
+                                            e.target.src = `https://placehold.co/400x300/e2e8f0/64748b?text=${encodeURIComponent(profile.name)}`;
+                                        }}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                </div>
+                            </div>
+
+                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-3 ${profileType.includes("Birth") ? 'bg-blue-100 text-blue-800' : 'bg-gray-200 text-gray-700'}`}>
+                                {profile.type}
+                            </span>
+                            
+                            <h2 className="serif text-2xl font-bold text-gray-900 mb-1">{profile.name}</h2>
+                            <p className="text-sm text-gray-500 italic mb-4">{profile.dates}</p>
+                            
+                            <div className="space-y-2 mb-6 text-sm text-gray-700">
+                                <div className="flex items-center gap-2">
+                                    <User size={14} className="text-indigo-600" />
+                                    <span>{profile.community}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Award size={14} className="text-indigo-600" />
+                                    <span>{profile.role}</span>
+                                </div>
+                            </div>
+
+                            <div className="mb-6">
+                                <p className="text-xs font-bold uppercase text-gray-400 mb-2">Brutal Rating</p>
+                                <StarRating rating={profile.rating} />
+                            </div>
+
+                            <div>
+                                <p className="text-xs font-bold uppercase text-gray-400 mb-3">Attributes</p>
+                                {profile.attributes.map((attr, idx) => (
+                                    <AttributeBar key={idx} label={attr.label} value={attr.value} color={attr.color} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="w-full md:w-2/3 p-8 flex flex-col relative">
+                        <div className="flex-grow">
+                            <h3 className="serif text-xl font-bold text-gray-800 mb-2">
+                                {profile.tagline}
+                            </h3>
+                            <div className="flex items-center gap-2 text-sm text-gray-500 mb-4 border-b pb-4">
+                                <span className="font-semibold">Born:</span> {profile.location}
+                            </div>
+                            
+                            <div 
+                                className="prose prose-slate text-gray-600 leading-relaxed mb-6 whitespace-pre-line"
+                                dangerouslySetInnerHTML={{ __html: profile.content }}
+                            />
+                        </div>
+
+                        <div className="mt-8 pt-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div className="flex flex-wrap gap-3">
+                                {profile.links && profile.links.map((link, idx) => (
+                                    <a 
+                                        key={idx}
+                                        href={link.url}
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors bg-indigo-50 px-3 py-1.5 rounded-full hover:bg-indigo-100"
+                                    >
+                                        <span>{link.title}</span>
+                                        <ExternalLink size={12} />
+                                    </a>
+                                ))}
+                            </div>
+
+                            <button 
+                                onClick={handleCopy}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex-shrink-0 ${copied ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                            >
+                                {copied ? <span className="flex items-center gap-1">Copied!</span> : <><Copy size={16} /> Copy Narrative</>}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const QuoteCard = () => (
+            <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-xl shadow-lg p-8 text-white relative overflow-hidden mb-12">
+                <div className="absolute top-0 right-0 -mt-4 -mr-4 text-indigo-500 opacity-20">
+                    <Quote size={150} />
+                </div>
+                <div className="relative z-10 max-w-2xl">
+                    <div className="flex items-center gap-2 mb-4 text-indigo-200 uppercase tracking-widest text-xs font-bold">
+                        <Quote size={16} />
+                        <span>Quote of the Day</span>
+                    </div>
+                    <blockquote className="serif text-2xl md:text-3xl font-bold leading-tight mb-6">
+                        "You can't cross the sea merely by standing and staring at the water."
+                    </blockquote>
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-400">
+                             <img src="https://biographybd.com/wp-content/uploads/2015/05/Rabindranath-Tagore.gif" className="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                            <div className="font-bold text-lg">Rabindranath Tagore</div>
+                            <div className="text-indigo-300 text-sm">Nobel Laureate & Poet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const ArtifactCard = () => (
+            <div className="bg-white rounded-xl shadow-lg p-8 border-l-8 border-amber-600 relative overflow-hidden mb-12 flex flex-col md:flex-row gap-6 items-center">
+                <div className="bg-amber-100 p-4 rounded-full text-amber-700">
+                    <BookOpen size={40} />
+                </div>
+                <div>
+                    <div className="text-amber-600 uppercase tracking-widest text-xs font-bold mb-1">
+                        Featured Artifact
+                    </div>
+                    <h3 className="serif text-2xl font-bold text-gray-900 mb-2">
+                        The Tatwabodhini Patrika (1912)
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                        While the song was sung today in 1911, it was first published next month (Jan 1912) in the official journal of the Brahmo Samaj, <em>Tatwabodhini Patrika</em>, under the title <strong>"Bharoto Bhagyo Bidhata"</strong>. This journal is a key artifact documenting the intellectual awakening of the era.
+                    </p>
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            return (
+                <div className="min-h-screen bg-[#FDFBF7] text-gray-800 pb-20">
+                    {/* Header */}
+                    <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+                        <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-orange-600 text-white p-2 rounded-lg">
+                                    <BookOpen size={24} />
+                                </div>
+                                <div>
+                                    <h1 className="serif text-xl font-bold text-gray-900 leading-none">The Heritage Log</h1>
+                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-widest mt-1">December 27 Edition</p>
+                                </div>
+                            </div>
+                            <div className="hidden md:flex items-center gap-2 text-sm font-medium text-gray-500">
+                                <Calendar size={16} />
+                                <span>Today's Digest</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="max-w-4xl mx-auto px-4 py-10 space-y-12">
+                        
+                        {/* Intro Box */}
+                        <div className="text-center max-w-2xl mx-auto mb-12">
+                            <h2 className="serif text-3xl md:text-4xl font-bold text-gray-900 mb-4">Celebrating Vision & Voice</h2>
+                            <p className="text-gray-600 text-lg">
+                                Today, we honor a modern infrastructure visionary, a voice that defined celebration, and the historic moment our National Anthem was born.
+                            </p>
+                        </div>
+
+                        {/* Quote of the Day */}
+                        <QuoteCard />
+
+                        {/* Artifact of the Day */}
+                        <ArtifactCard />
+
+                        {/* Cards Loop */}
+                        <div className="space-y-10">
+                            {profiles.map(profile => (
+                                <ProfileCard key={profile.id} profile={profile} />
+                            ))}
+                        </div>
+
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-gray-900 text-white py-12 mt-12">
+                        <div className="max-w-5xl mx-auto px-4 text-center">
+                            <h3 className="serif text-2xl font-bold mb-4">The Heritage Log</h3>
+                            <p className="text-gray-400 mb-8 max-w-lg mx-auto">
+                                Preserving the history, achievements, and legacy of the community. Data verified for December 27.
+                            </p>
+                            <div className="text-xs text-gray-600 uppercase tracking-widest">
+                                &copy; 2025 Heritage Archives
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
